@@ -10,5 +10,5 @@ xor=0
 
 for i in a:
     xor=i^xor
-
 print(xor)
+
