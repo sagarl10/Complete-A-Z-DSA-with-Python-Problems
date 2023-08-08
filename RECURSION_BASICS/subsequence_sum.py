@@ -8,4 +8,4 @@ def subs(arr,sub,sum,target,index):
     sub.remove(arr[index])
     subs(arr,sub,sum,target,index+1)    
 
-subs([1,1,2,3,1,2,0,3,4,4],[],0,2,0)    
+subs([1,1,1,2,2],[],0,4,0)    
