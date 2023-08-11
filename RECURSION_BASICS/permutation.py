@@ -25,3 +25,4 @@ input_list = [1, 2, 3]  # Replace this with your input list
 permutation_list(input_list, [], temp)
 print(temp)
 
+
