@@ -8,7 +8,7 @@ def subsetsum(arr,temp,index,final):
         subsetsum(arr,temp,i+1,final)
         temp.pop()
 
-arr=[1,2,3]
-final=[]
+arr=[1,1,1,2,2]
+final=[] 
 subsetsum(arr,[],0,final) 
 print(final[:])   

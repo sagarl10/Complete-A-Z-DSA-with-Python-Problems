@@ -12,8 +12,8 @@ def comb_sum(arr,temp,index,sum,target,final):
         temp.pop()
 
 final=[]
-arr=[1,2,3,2,4,7]
-target=7
+arr=[1,1,1,2,2]
+target=4
 arr=sorted(arr)
 comb_sum(arr,[],0,0,target,final)
 print(final)

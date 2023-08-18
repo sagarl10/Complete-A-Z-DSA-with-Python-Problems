@@ -10,4 +10,4 @@ def comb_sum(arr,temp,target,index):
         temp.remove(arr[index])
     comb_sum(arr,temp,target,index+1)
 
-comb_sum([2,3,4,7],[],7,0)
+comb_sum([1,1,1,2,2],[],4,0)
