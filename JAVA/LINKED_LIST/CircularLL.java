@@ -58,10 +58,11 @@ public class CircularLL {
             return;
         }
         Node temp=head;
-        do{
-            if
+        while(temp.next!=head && temp.next.next!=head){
+            temp=temp.next;
         }
-
+        temp.next=head;
+        tail=temp;
         return;
     }
     
