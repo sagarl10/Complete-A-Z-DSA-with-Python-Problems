@@ -6,7 +6,7 @@ public class Main {
         cl.insert(1);
         cl.insert(2);
         cl.insert(3);
-        cl.delete(2);
+        cl.delete(3);
         cl.display();
     }
     
