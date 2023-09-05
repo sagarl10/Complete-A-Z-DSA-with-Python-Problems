@@ -15,7 +15,7 @@ public class NGR {
 
             }
             else{
-                arr[i]=s.peek();
+                arr[i]=s.peek(); 
             }
             s.push(cur);
         }
