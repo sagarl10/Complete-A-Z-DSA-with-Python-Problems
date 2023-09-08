@@ -296,6 +296,21 @@ public class Traversal {
         solve_right(root, 0, list);
         return list;
     }
+    public static void leaf_path(Node root, List<List<Integer>> list, List<Integer> path) {
+        if (root == null) {
+            return;
+        }
+        path.add(root.data);
+        if (root.left == null && root.right == null) {
+            list.add(new ArrayList<>(path));
+             // Create a new copy of path
+        }
+        leaf_path(root.left, list, path);
+        leaf_path(root.right, list, path);
+        path.remove(path.size() - 1);
+        
+        
+    }
     
     public static void main(String[] args) {
         BinaryTree bt=new BinaryTree();
@@ -363,6 +378,16 @@ public class Traversal {
         System.out.println("-----------------------------------------------");
         List<Integer> l9=t.right_view(bt.root);
         System.out.println(l9);
+
+        System.out.println("-----------------------------------------------");
+        List<List<Integer>> lis=new ArrayList<>();
+        List<Integer> ll=new ArrayList<>();
+        leaf_path(bt.root,lis,ll);
+        for (List<Integer> integer : lis) {
+            System.out.println(integer);
+            
+        }
+        
     }
     }
 
