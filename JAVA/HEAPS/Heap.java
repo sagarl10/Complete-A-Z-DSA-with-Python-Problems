@@ -1,17 +1,48 @@
 package JAVA.HEAPS;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.PriorityQueue;
 
 public class Heap {
+    public static class TreeNode {
+        int data;
+        TreeNode left;
+        TreeNode right;
+
+        public TreeNode(int data) {
+            this.data = data;
+        }
+
+    }
+
     public static class Node {
         int data;
-        Node left;
-        Node right;
+        Node next;
 
         public Node(int data) {
             this.data = data;
+        }
+    }
+
+    public class Element implements Comparable<Element> {
+        int data;
+        int row;
+        int col;
+
+        public Element(int data, int row, int col) {
+            this.data = data;
+            this.row = row;
+            this.col = col;
+        }
+
+        @Override
+        public int compareTo(Element o) {
+            // TODO Auto-generated method stub
+            return Integer.compare(this.data, o.data);
         }
 
     }
@@ -166,14 +197,14 @@ public class Heap {
         return ans;
     }
 
-    public int countNodes(Node root) {
+    public int countNodes(TreeNode root) {
         if (root == null) {
             return 0;
         }
         return 1 + countNodes(root.left) + countNodes(root.right);
     }
 
-    public boolean isCBT(Node root, int index, int counts) {
+    public boolean isCBT(TreeNode root, int index, int counts) {
         if (root == null) {
             return true;
         }
@@ -186,7 +217,7 @@ public class Heap {
         return left && right;
     }
 
-    public boolean isMaxOrder(Node root) {
+    public boolean isMaxOrder(TreeNode root) {
         if (root == null) {
             return true;
         }
@@ -199,7 +230,7 @@ public class Heap {
         return isMaxOrder(root.left) && isMaxOrder(root.right);
     }
 
-    public boolean isHeap(Node root) {
+    public boolean isHeap(TreeNode root) {
         // 1. Check firstis it Complete Binary tree
         // i.Count numnber of node is tree
         // ii.Traverse in Binary tree until size matches to counts.
@@ -234,7 +265,7 @@ public class Heap {
         return cost;
     }
 
-    public void bstToArray(ArrayList<Integer> list, Node root) {
+    public void bstToArray(ArrayList<Integer> list, TreeNode root) {
         if (root == null) {
             return;
         }
@@ -243,7 +274,7 @@ public class Heap {
         bstToArray(list, root.left);
     }
 
-    public void arrayToHeap(ArrayList<Integer> list, Node root, int index) {
+    public void arrayToHeap(ArrayList<Integer> list, TreeNode root, int index) {
         if (root == null) {
             return;
         }
@@ -253,7 +284,7 @@ public class Heap {
 
     }
 
-    public Node convert_BST_to_MaxHeap(Node root) {
+    public TreeNode convert_BST_to_MaxHeap(TreeNode root) {
         ArrayList<Integer> list = new ArrayList<>();
         bstToArray(list, root);
         arrayToHeap(list, root, 0);
@@ -261,7 +292,7 @@ public class Heap {
     }
 
     public int kthLaregestSum(int arr[], int k) {
-        if(k>arr.length){
+        if (k > arr.length) {
             return -1;
         }
         PriorityQueue<Integer> pq = new PriorityQueue<>();
@@ -285,22 +316,106 @@ public class Heap {
 
     }
 
+    public ArrayList<Integer> mergeKsortedArray(ArrayList<ArrayList<Integer>> list) {
+        PriorityQueue<Element> pq = new PriorityQueue<>(list.size(), Comparator.comparingInt(e -> e.data));
+        for (int i = 0; i < list.size(); i++) {
+            pq.offer(new Element(list.get(i).get(0), i, 0));
+        }
+        ArrayList<Integer> ans = new ArrayList<>();
+        while (!pq.isEmpty()) {
+            Element e = pq.poll();
+            int data = e.data;
+            int row = e.row;
+            int col = e.col;
+
+            ans.add(data);
+
+            if (col + 1 < list.get(row).size()) {
+                pq.offer(new Element(list.get(row).get(col + 1), row, col + 1));
+            }
+        }
+        return ans;
+    }
+
+    public Node mergeKsortedLL(ArrayList<Node> list) {
+        PriorityQueue<Node> pq = new PriorityQueue<>(list.size(), Comparator.comparingInt(n -> n.data));
+        for (Node node : list) {
+            pq.offer(node);
+        }
+        Node dummyhead = new Node(-1);
+        Node cur = dummyhead;
+
+        while (!pq.isEmpty()) {
+            Node node = pq.poll();
+            cur.next = node;
+            cur = cur.next;
+            if (node.next != null) {
+                pq.offer(node.next);
+            }
+        }
+        return dummyhead.next;
+
+    }
+
+    public int[] smallestRange(List<List<Integer>> nums) {
+        PriorityQueue<Element> pq = new PriorityQueue<Element>(Comparator.comparingInt(e -> e.data));
+        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < nums.size(); i++) {
+            if (!nums.get(i).isEmpty()) {
+                int val = nums.get(i).get(0);
+                pq.offer(new Element(val, i, 0));
+                max = Math.max(max, val);
+                min = Math.min(min, val);
+            }
+        }
+        int start = min;
+        int end = max;
+        while (!pq.isEmpty()) {
+            Element e = pq.poll();
+            int data = e.data;
+            int row = e.row;
+            int col = e.col;
+            min = data;
+            if (max - min < end - start) {
+                start = min;
+                end = max;
+            }
+
+            if (col + 1 < nums.get(row).size()) {
+                int val = nums.get(row).get(col + 1);
+                pq.offer(new Element(val, row, col + 1));
+                max = Math.max(max, val);
+            } else {
+                break;
+            }
+
+        }
+        return new int[] { start, end };
+
+    }
+
     public static void main(String[] args) {
         Heap h = new Heap();
-        int a[]=new int[]{1,2,3,4,5};
-        // int b[]=new int[]{6,4,8,3,2};
-        // int ans[]=h.mergeHeaps(a, b, a.length, b.length);
-        // for (int i : ans) {
-        // System.out.println(i);
+        ArrayList<ArrayList<Integer>> list = new ArrayList<>();
+        list.add(new ArrayList<>(Arrays.asList(1, 2, 3, 4)));
+        list.add(new ArrayList<>(Arrays.asList(5, 7, 9, 10)));
+        list.add(new ArrayList<>(Arrays.asList(30, 31, 33, 40)));
+        list.add(new ArrayList<>(Arrays.asList(41, 47, 49, 70)));
+        ArrayList<Integer> ans = h.mergeKsortedArray(list);
+        for (Integer integer : ans) {
+            System.out.println(integer);
+        }
+        ArrayList<Node> nodes = new ArrayList<>();
+        nodes.add(new Node(3));
+        nodes.add(new Node(2));
+        nodes.add(new Node(1));
 
-        // }
-        // Node root=new Node(5);
-        // root.left=new Node(6);
-        // root.right=new Node(3);
-        // System.out.println(h.isHeap(root));
-        // int ropes[]={4,2,7,6,9};
-        // System.out.println(h.minCostRopes(ropes));
-        System.out.println(h.kthLaregestSum(a, 6));
+        Node ans1 = h.mergeKsortedLL(nodes);
+        while (ans1 != null) {
+            System.out.println(ans1.data);
+            ans1 = ans1.next;
+        }
 
     }
 
