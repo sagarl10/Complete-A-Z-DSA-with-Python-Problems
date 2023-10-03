@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 public class Heap {
@@ -45,6 +47,26 @@ public class Heap {
             return Integer.compare(this.data, o.data);
         }
 
+    }
+
+    public static class Pair {
+        int data;
+        int dist;
+
+        Pair(int data, int dist) {
+            this.data = data;
+            this.dist = dist;
+        }
+    }
+
+    public static class Pair1 {
+        int data;
+        int count;
+
+        Pair1(int data, int count) {
+            this.data = data;
+            this.count = count;
+        }
     }
 
     int a[];
@@ -395,27 +417,141 @@ public class Heap {
 
     }
 
+    public List<Integer> kLargestEles(int arr[], int k) {
+        PriorityQueue<Integer> heap = new PriorityQueue<>();
+        for (int i = 0; i < arr.length; i++) {
+            if (i < k) {
+                heap.offer(arr[i]);
+            } else {
+                if (arr[i] > heap.peek()) {
+                    heap.poll();
+                    heap.offer(arr[i]);
+                }
+            }
+        }
+        List<Integer> ans = new ArrayList<>();
+        while (!heap.isEmpty()) {
+            ans.add(heap.poll());
+        }
+        return ans;
+
+    }
+
+    public List<Integer> kClosestNos(int arr[], int k, int target) {
+        List<Integer> ans = new ArrayList<>();
+        PriorityQueue<Pair> mxheap = new PriorityQueue<>((a, b) -> b.dist - a.dist);
+        for (int i = 0; i < arr.length; i++) {
+            if (i < k) {
+                mxheap.offer(new Pair(arr[i], Math.abs(arr[i] - target)));
+            } else if (Math.abs(arr[i] - target) < mxheap.peek().dist) {
+                mxheap.poll();
+                mxheap.offer(new Pair(arr[i], Math.abs(arr[i] - target)));
+            }
+        }
+        for (int i = 0; i < k; i++) {
+            ans.add(mxheap.poll().data);
+        }
+        return ans;
+    }
+
+    public List<Integer> kFrequentNos(int arr[], int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            map.put(arr[i], map.getOrDefault(arr[i], 0) + 1);
+        }
+        PriorityQueue<Pair1> minheap = new PriorityQueue<>((a, b) -> a.count - b.count);
+        for (Integer a : map.keySet()) {
+            if (minheap.size() < k) {
+                minheap.offer(new Pair1(a, map.get(a)));
+            } else if (map.get(a) > minheap.peek().count) {
+                minheap.poll();
+                minheap.offer(new Pair1(a, map.get(a)));
+
+            }
+        }
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < k; i++) {
+            ans.add(minheap.poll().data);
+
+        }
+        return ans;
+
+    }
+
+    public void frequencySort(int arr[]) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            map.put(arr[i], map.getOrDefault(arr[i], 0) + 1);
+        }
+        PriorityQueue<Pair1> maxheap = new PriorityQueue<>((a, b) -> b.count - a.count);
+        for (Integer a : map.keySet()) {
+            maxheap.offer(new Pair1(a, map.get(a)));
+        }
+        int index = 0;
+        while (!maxheap.isEmpty()) {
+            Pair1 p = maxheap.poll();
+            int data = p.data;
+            int cnt = p.count;
+
+            for (int i = 0; i < cnt; i++) {
+                arr[index] = data;
+                index++;
+            }
+        }
+    }
+
+    public int[][] kCloseToOr(int[][] arr, int k) {
+        PriorityQueue<Pair> maxheap = new PriorityQueue<>((a, b) -> b.dist - a.dist);
+        for (int i = 0; i < arr.length; i++) {
+            int dist = arr[i][0] * arr[i][0] + arr[i][1] * arr[i][1];
+            if (i < k) {
+                maxheap.offer(new Pair(i, dist));
+            } else if (dist < maxheap.peek().dist) {
+                maxheap.poll();
+                maxheap.offer(new Pair(i, dist));
+            }
+
+        }
+        int ans[][] = new int[k][];
+        for (int i = 0; i < k; i++) {
+            ans[i] = arr[maxheap.poll().data];
+        }
+        return ans;
+
+    }
+
+    public int sumElek1nk2small(int arr[], int k1, int k2) {
+        int k1Smallest = this.kthMin(arr, k1);
+        int k2Smallest = this.kthMin(arr, k2);
+    
+        int sum = 0;
+        boolean counting = false;
+    
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == k1Smallest) {
+                counting = true;
+                continue;
+            }
+            if (arr[i] == k2Smallest) {
+                counting = false;
+                break; // Stop counting once k2-th smallest element is encountered
+            }
+            if (counting) {
+                sum += arr[i];
+            }
+            
+        }
+        return sum;
+    }
+    
+    
     public static void main(String[] args) {
         Heap h = new Heap();
-        ArrayList<ArrayList<Integer>> list = new ArrayList<>();
-        list.add(new ArrayList<>(Arrays.asList(1, 2, 3, 4)));
-        list.add(new ArrayList<>(Arrays.asList(5, 7, 9, 10)));
-        list.add(new ArrayList<>(Arrays.asList(30, 31, 33, 40)));
-        list.add(new ArrayList<>(Arrays.asList(41, 47, 49, 70)));
-        ArrayList<Integer> ans = h.mergeKsortedArray(list);
-        for (Integer integer : ans) {
-            System.out.println(integer);
-        }
-        ArrayList<Node> nodes = new ArrayList<>();
-        nodes.add(new Node(3));
-        nodes.add(new Node(2));
-        nodes.add(new Node(1));
+        int arr[] = {1,9,2,3,7,8};
 
-        Node ans1 = h.mergeKsortedLL(nodes);
-        while (ans1 != null) {
-            System.out.println(ans1.data);
-            ans1 = ans1.next;
-        }
+        // int arr[][] = { { 1, 1 }, { 2, 2 }, { 0, 0 }, { 1, 2 } };
+        int ans= h.sumElek1nk2small(arr, 1,4);
+        System.out.println(ans);
 
     }
 
