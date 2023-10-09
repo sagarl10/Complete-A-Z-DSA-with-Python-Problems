@@ -1,6 +1,7 @@
 package JAVA.GRAPH;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.LinkedList;
@@ -93,6 +94,48 @@ public class CustomGraph {
         return false;
         
     }
+    public List<Integer> shortest_path_Ud(int[][] edges,int start,int end){
+        List<Integer> ans=new ArrayList<>();
+        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
+        for(int i=0;i<9;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<edges.length;i++){
+            adj.get(edges[i][0]).add(edges[i][1]);
+            adj.get(edges[i][1]).add(edges[i][0]);
+        }
+        boolean visited[]=new boolean[9];
+        int parent[]=new int[9];
+        Arrays.fill(visited,false);
+        Arrays.fill(parent,-1);
+        Queue<Integer> q=new LinkedList<>();
+        q.add(start);
+        while(!q.isEmpty()){
+            int cur=q.poll();
+
+            for (Integer neighbor : adj.get(cur)) {
+                if(!visited[neighbor]){
+                    visited[neighbor]=true;
+                    parent[neighbor]=cur;
+                    q.offer(neighbor);
+                }
+            }
+        }
+        construct_short_path(ans, start, end, parent);
+        return ans;
+        
+    }
+    public void construct_short_path(List<Integer> list,int start,int end,int parent[]){
+        int current=parent[end];
+        list.add(end);
+        while(current!=-1){
+            list.add(current);
+            if(current==start){
+                break;
+            }
+            current=parent[current];
+        }
+    }
     
     
 
@@ -117,6 +160,17 @@ public class CustomGraph {
         CustomGraph c=new CustomGraph();
         boolean ans=c.isCycle(graph);
         System.out.println(ans);  
+
+        int[][] edge = {{0,1},{0,3},{3,4},{4,5},{5,6},{1,2},{2,6},{6,7},{7,8},{6,8}};
+        List<Integer> ansop=c.shortest_path_Ud(edge, 1, 8);
+        for (Integer integer : ansop) {
+            System.out.println(integer);
+            
+        }
+
+
+
+
     }
     
     
